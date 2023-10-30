@@ -1,0 +1,14 @@
+{
+  "version": "0.1.0",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "esbuild": "^0.18.20",
+    "eslint": "^8.49.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noemit",
+    "test": "cd test && node build.js && node ./index.js",
+    "lint": "eslint ./src/**/*.ts",
+    "lint:fix": "eslint ./src/**/*.ts --fix"
+  }
+}

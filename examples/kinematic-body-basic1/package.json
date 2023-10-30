@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "esbuild": "^0.18.20"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "typecheck": "tsc --noemit"
+  }
+}

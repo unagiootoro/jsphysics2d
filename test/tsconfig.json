@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "System",
+        "declaration": true,
+        "baseUrl": ".",
+        "outFile": "./index.js",
+        "inlineSourceMap": false,
+        "noFallthroughCasesInSwitch": true,
+        "strict": true,
+        "removeComments": false,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+    },
+    "include": [
+        "./test.ts",
+    ]
+}
