@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "target": "es2020",
-        "module": "System",
+        "module": "es2015",
         "declaration": true,
         "baseUrl": ".",
-        "outFile": "./index.js",
+        "outDir": "./build",
         "inlineSourceMap": false,
         "noFallthroughCasesInSwitch": true,
         "strict": true,
