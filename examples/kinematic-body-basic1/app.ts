@@ -6,6 +6,7 @@ import { Vec2 } from "../../index";
 import { World } from "../../index";
 import { Input } from "../../index";
 import { Polygon } from "../../index";
+import { Rect } from "../../index";
 
 const WorldWidth = 20;
 const WorldHeight = 15;
@@ -22,8 +23,7 @@ window.onload = () => {
     const world = new World(WorldWidth, WorldHeight);
     world.gravity = new Vec2(0, 0.1);
 
-    const vertices = [new Vec2(-0.5, -0.5), new Vec2(0.5, -0.5), new Vec2(0.5, 0.5), new Vec2(-0.5, 0.5)];
-    const polygon = new Polygon(vertices);
+    const polygon = new Rect(new Vec2(1, 1));
     const body = new KinematicBody(polygon, { group: MainGroup, mask: WallCategory });
     body.position = new Vec2(8, 1);
     body.meta.fillStyle = "#ff0000ff";

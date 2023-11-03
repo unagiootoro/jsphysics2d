@@ -4,6 +4,7 @@ export { Vec2 } from "./src/Vec2";
 export { Circle } from "./src/Circle";
 export { Line } from "./src/Line";
 export { Polygon } from "./src/Polygon";
+export { Rect } from "./src/Rect";
 
 export { World } from "./src/World";
 export { CollisionObject } from "./src/CollisionObject";
