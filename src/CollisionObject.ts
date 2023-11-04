@@ -3,6 +3,7 @@ import { CollisionShape } from "./CollisionShape";
 import { SATChecker } from "./SATChecker";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
+import { EPSILON } from "./utils";
 
 export interface ICollisionObject {
     /** Collision group bit flags. */
@@ -90,7 +91,7 @@ export abstract class CollisionObject {
             const aabb2 = object.shape.toAABB();
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const depth = satChecker.checkSATCollision(this.shape, object.shape);
-            if (depth) {
+            if (depth && depth.length >= EPSILON) {
                 results.push(new CollisionResult(this, object, depth));
             }
         }

@@ -47,24 +47,18 @@ export class KinematicBody extends CollisionBody {
     }
 
     private _collisionResolve(): [boolean, CollisionResult[]] {
-        const aabb1 = this.shape.toAABB();
-        const collisionResults: CollisionResult[] = [];
-        const satChecker = new SATChecker();
+        let collisionResults: CollisionResult[] = [];
 
         for (let i = 0; i < KinematicBody.MAX_COLLISION_RESOLVE_COUNT; i++) {
             let maxDepth: Vec2 | undefined;
-            const bodies: CollisionBody[] = this.world!.findCollidableBodies(this);
-            for (const body of bodies) {
-                const aabb2 = body.shape.toAABB();
-                if (!aabb1.isCollidedAABB(aabb2)) continue;
-                const depth = satChecker.checkSATCollision(this.shape, body.shape);
-                if (depth) {
-                    if (i === 0) {
-                        collisionResults.push(new CollisionResult(this, body, depth));
-                    }
-                    if (!maxDepth || maxDepth.length < depth.length) {
-                        maxDepth = depth;
-                    }
+            const results = this.checkCollideBodies();
+            if (i === 0) {
+                collisionResults = results;
+            }
+            for (const result of results) {
+                const depth = result.depth;
+                if (!maxDepth || maxDepth.length < depth.length) {
+                    maxDepth = depth;
                 }
             }
             if (maxDepth && maxDepth.length >= EPSILON) {
