@@ -28,6 +28,10 @@ export abstract class CollisionObject {
 
     /** Collision shape. */
     get shape() { return this._shape; }
+    set shape(value) {
+        this._shape = value.clone();
+        if (this.world) this.world._updateObject(this);
+    }
     /** Collision group bit flags. If the OR of this flag is 1, it is determined that they are the same group. */
     get group() { return this._group; }
     set group(value) { this._group = value; }
@@ -41,10 +45,16 @@ export abstract class CollisionObject {
     set mask(value) { this._mask = value; }
     /** Body position. */
     get position() { return this._shape.position; }
-    set position(value) { this._shape.position = value; }
+    set position(value) {
+        this._shape.position = value;
+        if (this.world) this.world._updateObject(this);
+    }
     /** Body angle. */
     get angle() { return this._shape.angle; }
-    set angle(value) { this._shape.angle = value; }
+    set angle(value) {
+        this._shape.angle = value;
+        if (this.world) this.world._updateObject(this);
+    }
     /** The world where the body is set. */
     get world() { return this._world; }
     /** Meta information. This value is used by the application to provide specific meta information to the Body. */
@@ -56,7 +66,7 @@ export abstract class CollisionObject {
      * @param opt Initialize option.
      */
     constructor(shape: CollisionShape, opt: ICollisionObject = {}) {
-        this._shape = shape;
+        this._shape = shape.clone();
         this._group = opt.group ?? 0;
         this._category = opt.category ?? 0;
         this._mask = opt.mask ?? 0;
