@@ -1,3 +1,5 @@
+import { Vec2 } from "./Vec2";
+
 export class Input {
     static readonly KEY_A = 65;
     static readonly KEY_B = 66;
@@ -31,14 +33,20 @@ export class Input {
     static readonly KEY_RIGHT = 39;
     static readonly KEY_SPACE = 32;
 
-    private static _keySystem: KeySystem;
+    static readonly MOUSE_LEFT = 0;
+    static readonly MOUSE_RIGHT = 2;
 
-    static init() {
+    private static _keySystem: KeySystem;
+    private static _mouseSystem: MouseSystem;
+
+    static init(canvas: HTMLCanvasElement) {
         this._keySystem = new KeySystem();
+        this._mouseSystem = new MouseSystem(canvas);
     }
 
     static update(): void {
         this._keySystem.update();
+        this._mouseSystem.update();
     }
 
     static isKeyPush(key: number) {
@@ -67,6 +75,22 @@ export class Input {
 
     static dir8(): number | undefined {
         return this._keySystem.dir8();
+    }
+
+    static isMousePush(button: number) {
+        return this._mouseSystem.isMousePush(button);
+    }
+
+    static isMouseDown(button: number) {
+        return this._mouseSystem.isMouseDown(button);
+    }
+
+    static isMouseUp(button: number) {
+        return this._mouseSystem.isMouseUp(button);
+    }
+
+    static mousePosition(): Vec2 {
+        return this._mouseSystem.mousePosition;
     }
 }
 
@@ -189,5 +213,70 @@ class KeySystem {
 
     private onKeyUp(e: KeyboardEvent) {
         this._nextKeyState[e.keyCode] = KeyState.UP;
+    }
+}
+
+class MouseSystem {
+    private _canvas: HTMLCanvasElement
+    private _mouseState: Array<KeyState>;
+    private _nextMouseState: Array<KeyState>;
+    private _mousePosition: Vec2 = Vec2.ZERO;
+
+    get mousePosition() { return this._mousePosition; }
+
+    constructor(canvas: HTMLCanvasElement) {
+        this._mouseState = new Array(245);
+        this._nextMouseState = new Array(245);
+        for (let i = 0; i < this._mouseState.length; i++) {
+            this._mouseState[i] = KeyState.UP;
+            this._nextMouseState[i] = this._mouseState[i];
+        }
+        this._canvas = canvas;
+        canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
+        canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
+        canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
+    }
+
+    update(): void {
+        for (let i = 0; i < this._mouseState.length; i++) {
+            if (this._mouseState[i] === KeyState.PUSH && this._nextMouseState[i] === KeyState.PUSH) {
+                this._nextMouseState[i] = KeyState.DOWN;
+            }
+            this._mouseState[i] = this._nextMouseState[i];
+        }
+    }
+
+    isMousePush(button: number) {
+        return this._mouseState[button] === KeyState.PUSH;
+    }
+
+    isMouseDown(button: number) {
+        return this._mouseState[button] === KeyState.PUSH || this._mouseState[button] === KeyState.DOWN;
+    }
+
+    isMouseUp(button: number) {
+        return this._mouseState[button] === KeyState.UP;
+    }
+
+    private onMouseDown(e: MouseEvent) {
+        switch (this._mouseState[e.button]) {
+            case KeyState.UP:
+                this._nextMouseState[e.button] = KeyState.PUSH;
+                break;
+            case KeyState.PUSH:
+                this._nextMouseState[e.button] = KeyState.DOWN;
+                break;
+        }
+    }
+
+    private onMouseUp(e: MouseEvent) {
+        this._nextMouseState[e.button] = KeyState.UP;
+    }
+
+    private onMouseMove(e: MouseEvent) {
+        const clientRect = this._canvas.getBoundingClientRect();
+        const x = e.pageX - clientRect.left;
+        const y = e.pageY - clientRect.top;
+        this._mousePosition = new Vec2(x, y);
     }
 }

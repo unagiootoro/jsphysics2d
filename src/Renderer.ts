@@ -4,7 +4,11 @@ import { Polygon } from "./Polygon";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
 
-const PIXEL_PER_METER = 32;
+export interface IRendererOption {
+    font?: string;
+    backgroundStyle?: string;
+    pixelPerMeter?: number;
+}
 
 export class Renderer {
     private _world: World;
@@ -12,13 +16,15 @@ export class Renderer {
     private _context: CanvasRenderingContext2D;
     private _backgroundStyle: string;
     private _logs: { [key: string]: any } = {};
+    private _pixelPerMeter: number;
 
-    constructor(world: World, canvas: HTMLCanvasElement, opt: { font?: string, backgroundStyle?: string } = {}) {
+    constructor(world: World, canvas: HTMLCanvasElement, opt: IRendererOption = {}) {
         this._world = world;
         this._canvas = canvas;
         this._context = canvas.getContext("2d")!;
         this._context.font = opt.font ?? "16px sans-serif";
         this._backgroundStyle = opt.backgroundStyle ?? "#000000ff";
+        this._pixelPerMeter = opt.pixelPerMeter ?? 32;
     }
 
     get logs() { return this._logs; }
@@ -52,9 +58,9 @@ export class Renderer {
         const worldPosition = circle.position;
         if (!worldPosition) return;
         this._context.arc(
-            worldPosition.x * PIXEL_PER_METER,
-            worldPosition.y * PIXEL_PER_METER,
-            circle.radius * PIXEL_PER_METER,
+            worldPosition.x * this._pixelPerMeter,
+            worldPosition.y * this._pixelPerMeter,
+            circle.radius * this._pixelPerMeter,
             0,
             Math.PI * 2
         );
@@ -63,9 +69,9 @@ export class Renderer {
         this._context.closePath();
         this._context.strokeStyle = strokeStyle;
         this._context.beginPath();
-        this._context.moveTo(worldPosition.x * PIXEL_PER_METER, worldPosition.y * PIXEL_PER_METER);
+        this._context.moveTo(worldPosition.x * this._pixelPerMeter, worldPosition.y * this._pixelPerMeter);
         const lineVec = Vec2.polar(circle.angle, circle.radius);
-        this._context.lineTo((worldPosition.x + lineVec.x) * PIXEL_PER_METER, (worldPosition.y + lineVec.y) * PIXEL_PER_METER);
+        this._context.lineTo((worldPosition.x + lineVec.x) * this._pixelPerMeter, (worldPosition.y + lineVec.y) * this._pixelPerMeter);
         this._context.stroke();
         this._context.closePath();
     }
@@ -76,11 +82,11 @@ export class Renderer {
         this._context.fillStyle = fillStyle;
         this._context.strokeStyle = strokeStyle;
         const vertices = polygon.worldVertices();
-        this._context.moveTo(vertices[0].x * PIXEL_PER_METER, vertices[0].y * PIXEL_PER_METER);
+        this._context.moveTo(vertices[0].x * this._pixelPerMeter, vertices[0].y * this._pixelPerMeter);
         for (let i = 1; i < vertices.length; i++) {
-            this._context.lineTo(vertices[i].x * PIXEL_PER_METER, vertices[i].y * PIXEL_PER_METER);
+            this._context.lineTo(vertices[i].x * this._pixelPerMeter, vertices[i].y * this._pixelPerMeter);
         }
-        this._context.lineTo(vertices[0].x * PIXEL_PER_METER, vertices[0].y * PIXEL_PER_METER);
+        this._context.lineTo(vertices[0].x * this._pixelPerMeter, vertices[0].y * this._pixelPerMeter);
         this._context.fill();
         this._context.stroke();
     }
@@ -88,6 +94,7 @@ export class Renderer {
     private _renderLogs(): void {
         let offsetY = 16;
         for (const key in this._logs) {
+            if (this._logs[key] === undefined) continue;
             const text = `${key}: ${this._valueToText(this._logs[key])}`;
             this._context.fillStyle = "#ffffffff";
             this._context.fillText(text, 0, offsetY);

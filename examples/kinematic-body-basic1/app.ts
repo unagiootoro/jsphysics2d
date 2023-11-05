@@ -45,7 +45,7 @@ window.onload = () => {
     const wallLeft = new KinematicBody(wallLeftLine, { group: MainGroup, category: WallCategory });
     world.add(wallLeft);
 
-    const terrain1PolygonVertices = [new Vec2(192 / 32, 0), new Vec2(256 / 32, 0), new Vec2(64 / 32, 128 / 32), new Vec2(0, 128 / 32)];
+    const terrain1PolygonVertices = [new Vec2(6, 0), new Vec2(8, 0), new Vec2(2, 4), new Vec2(0, 4)];
     const terrain1Polygon = new Polygon(terrain1PolygonVertices);
     const terrain1 = new KinematicBody(terrain1Polygon, { group: MainGroup, category: WallCategory });
     terrain1.position = new Vec2(2, 4);
@@ -60,7 +60,7 @@ window.onload = () => {
 
     const renderer = new Renderer(world, canvas);
 
-    Input.init();
+    Input.init(canvas);
 
     const loop = () => {
         Input.update();
