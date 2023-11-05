@@ -15,5 +15,7 @@ export { KinematicBody } from "./src/KinematicBody";
 export { SATChecker } from "./src/SATChecker";
 export { QuadTree } from "./src/QuadTree";
 
+export { Raycaster, RaycastResult } from "./src/Raycaster";
+
 export { Renderer } from "./src/Renderer";
 export { Input } from "./src/Input";

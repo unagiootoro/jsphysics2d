@@ -59,4 +59,52 @@ export class Line extends CollisionShape {
         line.position = this.position;
         return line;
     }
+
+    intersectLine(line: Line): Vec2 | undefined {
+        const a = this.begin;
+        const b = this.end
+        const c = line.begin;
+        const d = line.end;
+        const ab = b.sub(a);
+        const ac = c.sub(a);
+        const ad = d.sub(a);
+        const cd = d.sub(c);
+        const ca = a.sub(c);
+        const cb = b.sub(c);
+        const s = ab.cross(ac);
+        const t = ab.cross(ad);
+        const u = cd.cross(ca);
+        const v = cd.cross(cb);
+        const isIntersect = lt(s * t, 0) && lt(u * v, 0);
+        if (!isIntersect) return undefined;
+        const n = ac.neg().cross(cd) / cd.cross(ab);
+        return a.add(ab.mul(n));
+    }
+
+    intersectCircle(circle: Circle): Vec2[] {
+        const a = this.begin;
+        const b = this.end;
+        const c = circle.position;
+        const ab = b.sub(a);
+        const ac = c.sub(a);
+        const bc = c.sub(b);
+        const r = circle.radius;
+        const s = ab.norm().cross(ac);
+        if (Math.abs(s) >= r - EPSILON) return [];
+        const inA = lt(ac.length, r);
+        const inB = lt(bc.length, r);
+        if (inA && inB) {
+            return [];
+        } else {
+            const t = Math.sqrt(r ** 2 - s ** 2);
+            const d = c.add(ab.perp().norm().mul(s));
+            if (inA) {
+                return [d.add(ab.norm().mul(t))];
+            } else if (inB) {
+                return [d.add(ab.norm().mul(-t))];
+            } else {
+                return [d.add(ab.norm().mul(-t)), d.add(ab.norm().mul(t))];
+            }
+        }
+    }
 }
