@@ -1,5 +1,6 @@
 import { Circle } from "./Circle";
 import { CollisionObject } from "./CollisionObject";
+import { Line } from "./Line";
 import { Polygon } from "./Polygon";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
@@ -28,6 +29,7 @@ export class Renderer {
     }
 
     get logs() { return this._logs; }
+    get pixelPerMeter() { return this._pixelPerMeter; }
 
     render(): void {
         this._context.fillStyle = this._backgroundStyle;
@@ -45,6 +47,8 @@ export class Renderer {
         const strokeStyle: string = object.meta.strokeStyle ?? "#ffffffff";
         if (shape instanceof Circle) {
             this._renderCircle(shape, fillStyle, strokeStyle);
+        } else if (shape instanceof Line) {
+            this._renderLine(shape, fillStyle, strokeStyle);
         } else if (shape instanceof Polygon) {
             this._renderPolygon(shape, fillStyle, strokeStyle);
         }
@@ -76,12 +80,27 @@ export class Renderer {
         this._context.closePath();
     }
 
-    _renderPolygon(polygon: Polygon, fillStyle: string, strokeStyle: string): void {
+    private _renderPolygon(polygon: Polygon, fillStyle: string, strokeStyle: string): void {
         this._context.beginPath();
         this._context.lineWidth = 2;
         this._context.fillStyle = fillStyle;
         this._context.strokeStyle = strokeStyle;
         const vertices = polygon.worldVertices();
+        this._context.moveTo(vertices[0].x * this._pixelPerMeter, vertices[0].y * this._pixelPerMeter);
+        for (let i = 1; i < vertices.length; i++) {
+            this._context.lineTo(vertices[i].x * this._pixelPerMeter, vertices[i].y * this._pixelPerMeter);
+        }
+        this._context.lineTo(vertices[0].x * this._pixelPerMeter, vertices[0].y * this._pixelPerMeter);
+        this._context.fill();
+        this._context.stroke();
+    }
+
+    private _renderLine(line: Line, fillStyle: string, strokeStyle: string): void {
+        this._context.beginPath();
+        this._context.lineWidth = 2;
+        this._context.fillStyle = fillStyle;
+        this._context.strokeStyle = strokeStyle;
+        const vertices = line.worldVertices();
         this._context.moveTo(vertices[0].x * this._pixelPerMeter, vertices[0].y * this._pixelPerMeter);
         for (let i = 1; i < vertices.length; i++) {
             this._context.lineTo(vertices[i].x * this._pixelPerMeter, vertices[i].y * this._pixelPerMeter);
