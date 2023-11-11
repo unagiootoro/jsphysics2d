@@ -69,6 +69,18 @@ export class World {
         return bodies;
     }
 
+    /**
+     * Returns all collision objects that collide with the specified point.
+     * @return Collision object list.
+     */
+    checkCollideObjectsByPoint(point: Vec2): CollisionObject[] {
+        const objects = [];
+        for (const object of this.findObjectsByPoint(point)) {
+            if (object.checkCollidePoint(point)) objects.push(object);
+        }
+        return objects;
+    }
+
     _updateObject(object: CollisionObject): void {
         this._quadTree.updateObject(object);
     }

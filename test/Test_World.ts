@@ -1,5 +1,5 @@
 import { TestBase } from "./utils";
-import { KinematicBody, Polygon, Vec2, World } from "../index";
+import { Circle, KinematicBody, Polygon, Vec2, World } from "../index";
 
 export class Test_World extends TestBase {
     test_add() {
@@ -34,5 +34,24 @@ export class Test_World extends TestBase {
 
         body1.position = new Vec2(1.5, 2.5); // Execute World#updateBody when position update.
         this.assertEqualsArray([...world.findObjectsByPoint(new Vec2(6.5, 4.5))], []);
+    }
+
+    test_checkCollideObjectsByPoint() {
+        const world = new World(20, 20);
+        const circle = new Circle(0.5);
+
+        const body1 = new KinematicBody(circle);
+        body1.position = new Vec2(10, 10);
+        world.add(body1);
+
+        const body2 = new KinematicBody(circle);
+        body2.position = new Vec2(10.25, 10.25);
+        world.add(body2);
+
+        const body3 = new KinematicBody(circle);
+        body3.position = new Vec2(15, 15);
+        world.add(body3);
+
+        this.assertEqualsArray(world.checkCollideObjectsByPoint(new Vec2(10, 10)), [body1, body2]);
     }
 }
