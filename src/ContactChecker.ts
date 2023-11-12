@@ -32,7 +32,7 @@ export class ContactChecker {
     }
 
     private _checkContactsCircleAndCircle(shapeA: Circle, depth: Vec2): Vec2[] {
-        return [Vec2.polar(depth.rad, shapeA.radius)];
+        return [shapeA.position.sub(Vec2.polar(depth.rad, shapeA.radius))];
     }
 
     private _checkContactsCircleAndLine(circle: Circle, line: Line, depth: Vec2): Vec2[] {

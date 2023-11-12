@@ -80,4 +80,21 @@ export class Test_ContactChecker extends TestBase {
         this.assertInDelta(contacts[0].x, 9.8);
         this.assertInDelta(contacts[0].y, 10);
     }
+
+    test_checkContacts_CircleAndCircle() {
+        const circle1 = new Circle(0.5);
+        circle1.position = new Vec2(10, 10);
+
+        const circle2 = new Circle(0.5);
+        circle2.position = new Vec2(10.2, 10.2);
+
+        const satChecker = new SATChecker();
+        const depth = satChecker.checkSATCollision(circle1, circle2)!;
+
+        const contactChecker = new ContactChecker();
+        const contacts = contactChecker.checkContacts(circle1, circle2, depth);
+        this.assertEquals(contacts.length, 1);
+        this.assertInDelta(contacts[0].x, 9.6464);
+        this.assertInDelta(contacts[0].y, 9.6464);
+    }
 }
