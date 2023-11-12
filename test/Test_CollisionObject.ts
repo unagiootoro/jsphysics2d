@@ -30,6 +30,22 @@ export class Test_CollisionObject extends TestBase {
         this.assertEquals(body1.checkCollidePoint(new Vec2(20, 20)), false);
     }
 
+    // Ignore deactive object.
+    test_checkCollidePoint_3() {
+        const world = new World(20, 20);
+        const circle = new Circle(0.5);
+
+        const body1 = new TestCollisionObject(circle);
+        body1.position = new Vec2(10, 10);
+        body1.active = false;
+        world.add(body1);
+
+        this.assertEquals(body1.checkCollidePoint(new Vec2(10.5 - EPSILON * 2, 10)), false);
+
+        body1.active = true;
+        this.assertEquals(body1.checkCollidePoint(new Vec2(10.5 - EPSILON * 2, 10)), true);
+    }
+
     test_checkCollideObjects() {
         const world = new World(20, 20);
 
@@ -52,5 +68,30 @@ export class Test_CollisionObject extends TestBase {
         this.assertEquals(results.length, 1);
         this.assertInDelta(results[0].depth.x, 0.5);
         this.assertInDelta(results[0].depth.y, 0);
+    }
+
+    // Ignore deactive object.
+    test_checkCollideObjects_2() {
+        const world = new World(20, 20);
+
+        const circle1 = new Circle(0.5);
+        const body1 = new TestCollisionObject(circle1, { group: 0x01, category: 0x01, mask: 0x01 });
+        body1.position = new Vec2(10, 10);
+        world.add(body1);
+
+        const circle2 = new Circle(0.5);
+        const body2 = new TestCollisionObject(circle2, { group: 0x01, category: 0x01, mask: 0x01 });
+        body2.position = new Vec2(10.5, 10);
+        body2.active = false;
+        world.add(body2);
+
+        const results = body1.checkCollideObjects();
+        this.assertEquals(results.length, 0);
+
+        body2.active = true;
+        const results2 = body1.checkCollideObjects();
+        this.assertEquals(results2.length, 1);
+        this.assertInDelta(results2[0].depth.x, 0.5);
+        this.assertInDelta(results2[0].depth.y, 0);
     }
 }

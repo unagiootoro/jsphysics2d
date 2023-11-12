@@ -26,6 +26,7 @@ export abstract class CollisionObject {
     private _mask: number;
     private _world?: World;
     private _meta: { [key: string]: any };
+    private _active: boolean = true;
 
     /** Collision shape. */
     get shape() { return this._shape; }
@@ -58,6 +59,9 @@ export abstract class CollisionObject {
     }
     /** The world where the body is set. */
     get world() { return this._world; }
+    /** Activate object functionality. */
+    get active() { return this._active; }
+    set active(value) { this._active = value; }
     /** Meta information. This value is used by the application to provide specific meta information to the Body. */
     get meta() { return this._meta; }
     set meta(value) { this._meta = value; }
@@ -103,11 +107,13 @@ export abstract class CollisionObject {
      * @return Whether there was a collision or not.
      */
     checkCollidePoint(point: Vec2): boolean {
+        if (!this._active) return false;
         return this._shape.checkCollidePoint(point);
     }
 
     canCollideObject(object: CollisionObject): boolean {
         if (!(this.world && object.world)) return false;
+        if (!(this.active && object.active)) return false;
         if ((this.group | object.group) === 0) return false;
         if ((this.category & object.mask) === 0 && (object.category & this.mask) === 0) return false;
         return true;
