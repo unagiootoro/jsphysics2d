@@ -11,8 +11,8 @@ export abstract class CollisionBody extends CollisionObject {
      * Check for collisions with all collision bodies.
      * @return Collision result list.
      */
-    checkCollideBodies(): CollisionResult[] {
-        const results: CollisionResult[] = [];
+    checkCollideBodies(): CollisionResult<CollisionBody, CollisionBody>[] {
+        const results: CollisionResult<CollisionBody, CollisionBody>[] = [];
         if (!this.world) return results;
         const aabb1 = this.shape.toAABB();
         const satChecker = new SATChecker();
