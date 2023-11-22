@@ -9,6 +9,8 @@ export interface IWorldOption {
 }
 
 export class World {
+    private static _DEFAULT_MAX_QUAD_TREE_LEVEL = 8;
+
     private _width: number;
     private _height: number;
     private _objects: Set<CollisionObject> = new Set();
@@ -32,7 +34,7 @@ export class World {
     constructor(width: number, height: number, opt: IWorldOption = {}) {
         this._width = width;
         this._height = height;
-        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? 8;
+        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
         this._quadTree = new QuadTree(width, height, maxQuadTreeLevel);
     }
 
@@ -79,6 +81,22 @@ export class World {
             if (object.checkCollidePoint(point)) objects.push(object);
         }
         return objects;
+    }
+
+    /**
+     * Resize the world.
+     * @param width World width.
+     * @param height World height.
+     * @param opt Resize option.
+     */
+    resize(width: number, height: number, opt: { maxQuadTreeLevel?: number } = {}): void {
+        this._width = width;
+        this._height = height;
+        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
+        this._quadTree = new QuadTree(width, height, maxQuadTreeLevel);
+        for (const object of this._objects) {
+            this._quadTree.add(object);
+        }
     }
 
     _updateObject(object: CollisionObject): void {
