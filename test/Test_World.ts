@@ -56,15 +56,28 @@ export class Test_World extends TestBase {
     }
 
     test_resize() {
-        const world = new World(8, 8, { maxQuadTreeLevel: 3 });
+        const world = new World(4, 4, { maxQuadTreeLevel: 3 });
         const positions = [new Vec2(-0.5, -0.5), new Vec2(0.5, -0.5), new Vec2(0.5, 0.5), new Vec2(-0.5, 0.5)];
         const polygon = new Polygon(positions);
         const body1 = new KinematicBody(polygon);
         body1.position = new Vec2(6.5, 4.5);
         world.add(body1);
-        world.resize(32, 16, { maxQuadTreeLevel: 3 });
-        this.assertEquals(world.width, 32);
-        this.assertEquals(world.height, 16);
+        this.assertEqualsArray([...world.findObjectsByPoint(new Vec2(6.5, 4.5))], []);
+        world.resize(8, 8, { maxQuadTreeLevel: 3 });
+        this.assertEquals(world.width, 8);
+        this.assertEquals(world.height, 8);
+        this.assertEqualsArray([...world.findObjectsByPoint(new Vec2(6.5, 4.5))], [body1]);
+    }
+
+    test_autoResize() {
+        const world = new World(4, 4, { maxQuadTreeLevel: 3, autoResize: true });
+        const positions = [new Vec2(-0.5, -0.5), new Vec2(0.5, -0.5), new Vec2(0.5, 0.5), new Vec2(-0.5, 0.5)];
+        const polygon = new Polygon(positions);
+        const body1 = new KinematicBody(polygon);
+        body1.position = new Vec2(6.5, 4.5);
+        world.add(body1);
+        this.assertEquals(world.width, 7);
+        this.assertEquals(world.height, 5);
         this.assertEqualsArray([...world.findObjectsByPoint(new Vec2(6.5, 4.5))], [body1]);
     }
 }

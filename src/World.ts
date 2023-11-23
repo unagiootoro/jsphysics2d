@@ -6,6 +6,8 @@ import { CollisionBody } from "./CollisionBody";
 export interface IWorldOption {
     /** Maximum split level of quadtree. */
     maxQuadTreeLevel?: number;
+    /** If collision object extends outside the world, it will automatically resize the world. */
+    autoResize?: boolean;
 }
 
 export class World {
@@ -16,6 +18,8 @@ export class World {
     private _objects: Set<CollisionObject> = new Set();
     private _gravity: Vec2 = new Vec2(0, 9.8);
     private _quadTree: QuadTree;
+    private _maxQuadTreeLevel: number;
+    private _autoResize: boolean;
 
     /** World width. */
     get width() { return this._width; }
@@ -34,8 +38,9 @@ export class World {
     constructor(width: number, height: number, opt: IWorldOption = {}) {
         this._width = width;
         this._height = height;
-        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
-        this._quadTree = new QuadTree(width, height, maxQuadTreeLevel);
+        this._maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
+        this._autoResize = opt.autoResize ?? false;
+        this._quadTree = new QuadTree(width, height, this._maxQuadTreeLevel);
     }
 
     /**
@@ -44,6 +49,13 @@ export class World {
      */
     add(object: CollisionObject): void {
         if (this._objects.has(object)) return;
+        if (this._autoResize) {
+            const aabb = object.shape.toAABB();
+            const aabbRightDownPos = aabb.position.add(aabb.size);
+            if (aabbRightDownPos.x > this._width || aabbRightDownPos.y > this._height) {
+                this.resize(aabbRightDownPos.x, aabbRightDownPos.y);
+            }
+        }
         this._objects.add(object);
         object._setWorld(this);
         this._quadTree.add(object);
@@ -92,7 +104,7 @@ export class World {
     resize(width: number, height: number, opt: { maxQuadTreeLevel?: number } = {}): void {
         this._width = width;
         this._height = height;
-        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
+        const maxQuadTreeLevel = opt.maxQuadTreeLevel ?? this._maxQuadTreeLevel;
         this._quadTree = new QuadTree(width, height, maxQuadTreeLevel);
         for (const object of this._objects) {
             this._quadTree.add(object);
