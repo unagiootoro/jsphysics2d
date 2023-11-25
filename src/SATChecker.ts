@@ -108,7 +108,7 @@ export class SATChecker {
     getAxesWhenLineAndCircle(line: Line, circle: Circle): Vec2[] {
         const axes = this.getAxesWhenLine(line);
         for (const vertice of line.worldVertices()) {
-            if (!vertice.equals(circle.position)) axes.push(vertice.sub(circle.position));
+            if (!vertice.equals(circle.worldPosition())) axes.push(vertice.sub(circle.worldPosition()));
         }
         return axes;
     }
@@ -116,15 +116,15 @@ export class SATChecker {
     getAxesWhenPolygonAndCircle(polygon: Polygon, circle: Circle): Vec2[] {
         const axes = this.getAxesWhenPolygon(polygon);
         for (const vertice of polygon.worldVertices()) {
-            if (!vertice.equals(circle.position)) axes.push(vertice.sub(circle.position));
+            if (!vertice.equals(circle.worldPosition())) axes.push(vertice.sub(circle.worldPosition()));
         }
         return axes;
     }
 
     getAxesWhenCircleAndCircle(circle1: Circle, circle2: Circle) {
-        const vec = circle2.position.sub(circle1.position);
+        const vec = circle2.worldPosition().sub(circle1.worldPosition());
         if (vec.equals(Vec2.ZERO)) return [Vec2.UP];
-        return [circle2.position.sub(circle1.position)];
+        return [circle2.worldPosition().sub(circle1.worldPosition())];
     }
 
     getSATVertices(shape: CollisionShape, axis: Vec2): Vec2[] {
@@ -149,8 +149,8 @@ export class SATChecker {
     getSATVerticesWhenCircle(circle: Circle, axis: Vec2): Vec2[] {
         const v1 = axis.norm();
         const v2 = v1.neg();
-        const pos1 = circle.position.add(v1.mul(circle.radius));
-        const pos2 = circle.position.add(v2.mul(circle.radius));
+        const pos1 = circle.worldPosition().add(v1.mul(circle.radius));
+        const pos2 = circle.worldPosition().add(v2.mul(circle.radius));
         return [pos1, pos2];
     }
 }

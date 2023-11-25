@@ -41,7 +41,7 @@ export class ContactChecker {
         const circle2 = circle.clone();
         circle2.position = circle.position.sub(depth.add(depth.norm().mul(0.1)));
         const line2 = new Line(depth.add(depth.norm().mul(0.2)));
-        line2.position = circle2.position.add(depth.norm().mul(circle2.radius));
+        line2.position = circle2.worldPosition().add(depth.norm().mul(circle2.radius));
         const intersect = line2.intersectLine(line);
         if (intersect) contacts.push(intersect);
 

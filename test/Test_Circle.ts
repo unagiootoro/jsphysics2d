@@ -12,6 +12,15 @@ export class Test_Circle extends TestBase {
         this.assertEquals(aabb.y2, 8.5);
     }
 
+    test_worldPosition() {
+        const circle = new Circle(0.5);
+        circle.anchor = new Vec2(0, -0.25);
+        circle.position = new Vec2(10, 8);
+        circle.angle = Math.PI / 2;
+        this.assertEquals(circle.worldPosition().x, 9.75);
+        this.assertEquals(circle.worldPosition().y, 8);
+    }
+
     test_checkCollidePoint() {
         const circle = new Circle(0.5);
         circle.position = new Vec2(10, 8);

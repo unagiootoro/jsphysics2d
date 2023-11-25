@@ -59,7 +59,7 @@ export class Renderer {
         this._context.lineWidth = 2;
         this._context.fillStyle = fillStyle;
         this._context.strokeStyle = strokeStyle;
-        const worldPosition = circle.position;
+        const worldPosition = circle.worldPosition();
         if (!worldPosition) return;
         this._context.arc(
             worldPosition.x * this._pixelPerMeter,

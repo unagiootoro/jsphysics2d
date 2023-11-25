@@ -11,12 +11,24 @@ export class Test_Line extends TestBase {
         this.assertEquals(aabb.y2, 8.5);
     }
 
+    test_worldVertices() {
+        const line = new Line(new Vec2(1, 0));
+        line.anchor = new Vec2(-0.25, 0);
+        line.position = new Vec2(10, 8);
+        line.angle = Math.PI / 2;
+        const worldVertices = line.worldVertices();
+        this.assertEquals(worldVertices[0].x, 10);
+        this.assertEquals(worldVertices[0].y, 7.75);
+        this.assertEquals(worldVertices[1].x, 10);
+        this.assertEquals(worldVertices[1].y, 8.75);
+    }
+
     test_intersect() {
         const line1 = Line.fromBeginToEnd(new Vec2(0, 0), new Vec2(1, 1));
         const line2 = Line.fromBeginToEnd(new Vec2(1, 0), new Vec2(0, 1));
         const intersect = line1.intersectLine(line2)!;
-        this.assertEquals(intersect.x, 0.5);
-        this.assertEquals(intersect.y, 0.5);
+        this.assertInDelta(intersect.x, 0.5);
+        this.assertInDelta(intersect.y, 0.5);
     }
 
     test_intersect2() {

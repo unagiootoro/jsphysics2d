@@ -1,5 +1,5 @@
 import { Vec2 } from "./Vec2";
-import { CollisionShape } from "./CollisionShape";
+import { CollisionShape, ICollisionShapeOption } from "./CollisionShape";
 import { Line } from "./Line";
 import { AABB } from "./AABB";
 
@@ -8,13 +8,14 @@ export class Polygon extends CollisionShape {
 
     get vertices() { return this._vertices; }
 
-    constructor(vertices: Vec2[]) {
-        super();
+    constructor(vertices: Vec2[], opt: ICollisionShapeOption = {}) {
+        super(opt);
         this._vertices = vertices;
     }
 
     worldVertices(): Vec2[] {
         return this._vertices.map(vertice => {
+            vertice = vertice.sub(this.anchor);
             vertice = vertice.rotate(vertice.rad + this.angle);
             vertice = vertice.add(this.position);
             return vertice;
@@ -87,6 +88,7 @@ export class Polygon extends CollisionShape {
         const polygon = new Polygon(this._vertices);
         polygon.position = this.position;
         polygon.angle = this.angle;
+        polygon.anchor = this.anchor;
         return polygon;
     }
 }

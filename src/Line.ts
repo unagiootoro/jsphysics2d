@@ -20,8 +20,18 @@ export class Line extends CollisionShape {
     }
 
     get vec() { return this._vec; }
-    get begin() { return this.position.sub(this._vec.div(2)); }
-    get end() { return this.position.add(this._vec.div(2)); }
+    get begin() {
+        let vec = this._vec.div(2).neg();
+        vec = vec.sub(this.anchor);
+        vec = vec.rotate(vec.rad + this.angle);
+        return this.position.add(vec);
+    }
+    get end() {
+        let vec = this._vec.div(2);
+        vec = vec.sub(this.anchor);
+        vec = vec.rotate(vec.rad + this.angle);
+        return this.position.add(vec);
+    }
 
     worldVertices(): Vec2[] {
         return [this.begin, this.end];
@@ -50,13 +60,15 @@ export class Line extends CollisionShape {
 
     checkCollidePoint(point: Vec2): boolean {
         const a = point.sub(this.begin);
-        const b = this._vec;
+        const b = this.end.sub(this.begin);
         return eq(a.dot(b), a.length * b.length) && a.length < b.length - EPSILON / 2;
     }
 
     clone(): Line {
         const line = new Line(this._vec);
         line.position = this.position;
+        line.angle = this.angle;
+        line.anchor = this.anchor;
         return line;
     }
 
@@ -84,7 +96,7 @@ export class Line extends CollisionShape {
     intersectCircle(circle: Circle): Vec2[] {
         const a = this.begin;
         const b = this.end;
-        const c = circle.position;
+        const c = circle.worldPosition();
         const ab = b.sub(a);
         const ac = c.sub(a);
         const bc = c.sub(b);
