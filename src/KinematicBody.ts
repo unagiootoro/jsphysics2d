@@ -15,7 +15,7 @@ export class KinematicBody extends CollisionBody {
      * @param deltaVelocity Delta velocity.
      * @return Collision result list.
      */
-    move(deltaVelocity: Vec2): CollisionResult<CollisionBody, CollisionBody>[] {
+    move(deltaVelocity: Vec2): CollisionResult<CollisionBody>[] {
         if (!this.world) return [];
         const prevPosition = this.position;
         this.position = this.position.add(deltaVelocity);
@@ -32,7 +32,7 @@ export class KinematicBody extends CollisionBody {
      * @param angle Angle.
      * @return Collision result list.
      */
-    rotate(angle: number): CollisionResult<CollisionBody, CollisionBody>[] {
+    rotate(angle: number): CollisionResult<CollisionBody>[] {
         if (!this.world) return [];
         const prevAngle = this.angle;
         const prevPosition = this.position;
@@ -46,8 +46,8 @@ export class KinematicBody extends CollisionBody {
         return results;
     }
 
-    private _collisionResolve(): [boolean, CollisionResult<CollisionBody, CollisionBody>[]] {
-        let collisionResults: CollisionResult<CollisionBody, CollisionBody>[] = [];
+    private _collisionResolve(): [boolean, CollisionResult<CollisionBody>[]] {
+        let collisionResults: CollisionResult<CollisionBody>[] = [];
 
         for (let i = 0; i < KinematicBody.MAX_COLLISION_RESOLVE_COUNT; i++) {
             let maxDepth: Vec2 | undefined;

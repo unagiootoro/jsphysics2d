@@ -86,17 +86,21 @@ export abstract class CollisionObject {
      * Check for collisions with all collision objects.
      * @return Collision result list.
      */
-    checkCollideObjects(): CollisionResult<CollisionObject, CollisionObject>[] {
-        const results: CollisionResult<CollisionObject, CollisionObject>[] = [];
-        if (!this.world) return results;
+    checkCollideObjects(): CollisionResult<CollisionObject>[] {
+        if (!this.world) return [];
+        return this._checkCollideByTargets(this.world.findCollidableObjects(this));
+    }
+
+    protected _checkCollideByTargets<T extends CollisionObject>(targets: T[]): CollisionResult<T>[] {
+        const results: CollisionResult<T>[] = [];
         const aabb1 = this.shape.toAABB();
         const satChecker = new SATChecker();
-        for (const object of this.world.findCollidableObjects(this)) {
+        for (const object of targets) {
             const aabb2 = object.shape.toAABB();
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const depth = satChecker.checkSATCollision(this.shape, object.shape);
             if (depth && depth.length >= EPSILON) {
-                results.push(new CollisionResult(this, object, depth));
+                results.push(new CollisionResult(object, depth));
             }
         }
         return results;

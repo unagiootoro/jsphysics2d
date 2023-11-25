@@ -1,14 +1,12 @@
 import { CollisionObject } from "./CollisionObject";
 import { Vec2 } from "./Vec2";
 
-export class CollisionResult<T extends CollisionObject, U extends CollisionObject> {
-    readonly objectA: T;
-    readonly objectB: U;
+export class CollisionResult<T extends CollisionObject> {
+    readonly object: T;
     readonly depth: Vec2;
 
-    constructor(objectA: T, objectB: U, depth: Vec2) {
-        this.objectA = objectA;
-        this.objectB = objectB;
+    constructor(object: T, depth: Vec2) {
+        this.object = object;
         this.depth = depth;
     }
 }

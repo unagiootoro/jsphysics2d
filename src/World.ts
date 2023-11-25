@@ -2,6 +2,7 @@ import { Vec2 } from "./Vec2";
 import { CollisionObject } from "./CollisionObject";
 import { QuadTree } from "./QuadTree";
 import { CollisionBody } from "./CollisionBody";
+import { CollisionArea } from "./CollisionArea";
 
 export interface IWorldOption {
     /** Maximum split level of quadtree. */
@@ -128,6 +129,15 @@ export class World {
             if (object instanceof CollisionBody) bodies.push(object);
         }
         return bodies;
+    }
+
+    findCollidableAreas(subject: CollisionObject): CollisionArea[] {
+        const areas: CollisionArea[] = [];
+        const objects = this.findCollidableObjects(subject);
+        for (const object of objects) {
+            if (object instanceof CollisionArea) areas.push(object);
+        }
+        return areas;
     }
 
     findObjectsByPoint(point: Vec2): CollisionObject[] {
