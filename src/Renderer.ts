@@ -16,7 +16,7 @@ export class Renderer {
     private _canvas: HTMLCanvasElement;
     private _context: CanvasRenderingContext2D;
     private _backgroundStyle: string;
-    private _logs: { [key: string]: any } = {};
+    private _logs: { [key: string]: unknown } = {};
     private _pixelPerMeter: number;
 
     constructor(world: World, canvas: HTMLCanvasElement, opt: IRendererOption = {}) {
@@ -43,8 +43,8 @@ export class Renderer {
     private _renderObject(object: CollisionObject): void {
         if (object.meta.invisible) return;
         const shape = object.shape;
-        const fillStyle: string = object.meta.fillStyle ?? "#00000000";
-        const strokeStyle: string = object.meta.strokeStyle ?? "#ffffffff";
+        const fillStyle: string = (object.meta.fillStyle as string | undefined) ?? "#00000000";
+        const strokeStyle: string = (object.meta.strokeStyle as string | undefined) ?? "#ffffffff";
         if (shape instanceof Circle) {
             this._renderCircle(shape, fillStyle, strokeStyle);
         } else if (shape instanceof Line) {
@@ -121,10 +121,10 @@ export class Renderer {
         }
     }
 
-    private _valueToText(value: any): string {
+    private _valueToText(value: unknown): string {
         if (value instanceof Vec2) {
             return JSON.stringify([value.x, value.y]);
         }
-        return value.toString();
+        return String(value);
     }
 }

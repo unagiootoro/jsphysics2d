@@ -13,7 +13,7 @@ export interface ICollisionObject {
     /** Collision bit mask. */
     mask?: number;
     /** Meta information. */
-    meta?: { [key: string]: any };
+    meta?: { [key: string]: unknown };
 }
 
 /**
@@ -25,7 +25,7 @@ export abstract class CollisionObject {
     private _category: number;
     private _mask: number;
     private _world?: World;
-    private _meta: { [key: string]: any };
+    private _meta: { [key: string]: unknown };
     private _active: boolean = true;
 
     /** Collision shape. */
