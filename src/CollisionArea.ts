@@ -1,8 +1,6 @@
 import { CollisionBody } from "./CollisionBody";
 import { CollisionObject } from "./CollisionObject";
 import { CollisionResult } from "./CollisionResult";
-import { SATChecker } from "./SATChecker";
-import { EPSILON } from "./utils";
 
 /**
  * This class deals with collision areas.

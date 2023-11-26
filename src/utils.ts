@@ -1,5 +1,3 @@
-import { Vec2 } from "./Vec2";
-
 export const EPSILON = 1e-7;
 
 export function lt(a: number, b: number) {

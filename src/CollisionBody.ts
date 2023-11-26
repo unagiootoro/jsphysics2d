@@ -1,8 +1,6 @@
 import { CollisionArea } from "./CollisionArea";
 import { CollisionObject } from "./CollisionObject";
 import { CollisionResult } from "./CollisionResult";
-import { SATChecker } from "./SATChecker";
-import { EPSILON } from "./utils";
 
 /**
  * Superclass of all collision bodies.

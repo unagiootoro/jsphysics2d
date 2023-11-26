@@ -1,6 +1,5 @@
 import { CollisionBody } from "./CollisionBody";
 import { CollisionResult } from "./CollisionResult";
-import { SATChecker } from "./SATChecker";
 import { Vec2 } from "./Vec2";
 import { EPSILON } from "./utils";
 

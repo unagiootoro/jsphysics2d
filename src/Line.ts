@@ -1,7 +1,7 @@
 import { Vec2 } from "./Vec2";
 import { CollisionShape } from "./CollisionShape";
 import { AABB } from "./AABB";
-import { EPSILON, eq, gt, lt } from "./utils";
+import { EPSILON, eq, lt } from "./utils";
 import { Circle } from "./Circle";
 
 export class Line extends CollisionShape {
