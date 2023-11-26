@@ -21,7 +21,6 @@ window.onload = () => {
     document.body.appendChild(canvas);
 
     const world = new World(WorldWidth, WorldHeight);
-    world.gravity = new Vec2(0, 0.1);
 
     const polygon = new Rect(new Vec2(1, 1));
     const body = new KinematicBody(polygon, { group: MainGroup, mask: WallCategory });
