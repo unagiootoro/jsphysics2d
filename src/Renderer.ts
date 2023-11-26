@@ -2,6 +2,7 @@ import { Circle } from "./Circle";
 import { CollisionObject } from "./CollisionObject";
 import { Line } from "./Line";
 import { Polygon } from "./Polygon";
+import { RaycastResult } from "./Raycaster";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
 
@@ -18,6 +19,7 @@ export class Renderer {
     private _backgroundStyle: string;
     private _logs: { [key: string]: unknown } = {};
     private _pixelPerMeter: number;
+    private _rays: Line[] = [];
 
     constructor(world: World, canvas: HTMLCanvasElement, opt: IRendererOption = {}) {
         this._world = world;
@@ -26,6 +28,10 @@ export class Renderer {
         this._context.font = opt.font ?? "16px sans-serif";
         this._backgroundStyle = opt.backgroundStyle ?? "#000000ff";
         this._pixelPerMeter = opt.pixelPerMeter ?? 32;
+        world.addEventListener("raycast", (...args: unknown[]) => {
+            const result = args[0] as RaycastResult;
+            this._rays.push(result.ray);
+        });
     }
 
     get logs() { return this._logs; }
@@ -37,6 +43,10 @@ export class Renderer {
         for (const object of this._world.objects) {
             this._renderObject(object);
         }
+        for (const ray of this._rays) {
+            this._renderLine(ray, "#ff0000ff", "#ff0000ff");
+        }
+        this._rays = [];
         this._renderLogs();
     }
 

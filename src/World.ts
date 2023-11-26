@@ -3,6 +3,8 @@ import { CollisionObject } from "./CollisionObject";
 import { QuadTree } from "./QuadTree";
 import { CollisionBody } from "./CollisionBody";
 import { CollisionArea } from "./CollisionArea";
+import { EventDispatcherImpl } from "./EventDispatcherImpl";
+import { Callback, IEventDispatcher } from "./IEventDispatcher";
 
 export interface IWorldOption {
     /** Maximum split level of quadtree. */
@@ -11,7 +13,7 @@ export interface IWorldOption {
     autoResize?: boolean;
 }
 
-export class World {
+export class World implements IEventDispatcher {
     private static _DEFAULT_MAX_QUAD_TREE_LEVEL = 8;
 
     private _width: number;
@@ -21,6 +23,7 @@ export class World {
     private _quadTree: QuadTree;
     private _maxQuadTreeLevel: number;
     private _autoResize: boolean;
+    private _eventDispatcherImpl: EventDispatcherImpl;
 
     /** World width. */
     get width() { return this._width; }
@@ -42,6 +45,19 @@ export class World {
         this._maxQuadTreeLevel = opt.maxQuadTreeLevel ?? World._DEFAULT_MAX_QUAD_TREE_LEVEL;
         this._autoResize = opt.autoResize ?? false;
         this._quadTree = new QuadTree(width, height, this._maxQuadTreeLevel);
+        this._eventDispatcherImpl = new EventDispatcherImpl();
+    }
+
+    addEventListener(eventType: string, callback: Callback): void {
+        this._eventDispatcherImpl.addEventListener(eventType, callback);
+    }
+
+    removeEventListener(eventType: string, callback: Callback): void {
+        this._eventDispatcherImpl.removeEventListener(eventType, callback);
+    }
+
+    dispatchEvent(eventType: string, ...callbackArgs: unknown[]): void {
+        this._eventDispatcherImpl.dispatchEvent(eventType, ...callbackArgs);
     }
 
     /**

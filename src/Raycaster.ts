@@ -60,10 +60,10 @@ export class Raycaster {
         let nearContact: Vec2 | undefined;
         let hitBody: CollisionBody | undefined;
         const rayLine = Line.fromBeginToEnd(begin, to);
-        const ray = new CollisionArea(rayLine, { group: this.group, category: this.category, mask: this.mask });
-        this._world.add(ray);
+        const rayArea = new CollisionArea(rayLine, { group: this.group, category: this.category, mask: this.mask });
+        this._world.add(rayArea);
         const aabb1 = rayLine.toAABB();
-        for (const body of this._world.findCollidableBodies(ray)) {
+        for (const body of this._world.findCollidableBodies(rayArea)) {
             const aabb2 = body.shape.toAABB();
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const contact = this._checkContact(rayLine, body.shape);
@@ -73,8 +73,16 @@ export class Raycaster {
                 hitBody = body;
             }
         }
-        this._world.remove(ray);
-        return new RaycastResult(nearContact, hitBody);
+        this._world.remove(rayArea);
+        let resultRayLine: Line;
+        if (nearContact) {
+            resultRayLine = Line.fromBeginToEnd(rayLine.begin, nearContact);
+        } else {
+            resultRayLine = rayLine;
+        }
+        const result = new RaycastResult(resultRayLine, nearContact, hitBody);
+        this._world.dispatchEvent("raycast", result);
+        return result;
     }
 
     private _checkContact(rayLine: Line, shape: CollisionShape): Vec2 | undefined {
@@ -122,14 +130,18 @@ export class Raycaster {
  * Execute ray cast result.
  */
 export class RaycastResult {
+    private _ray: Line;
     private _contact: Vec2 | undefined;
     private _body: CollisionBody | undefined;
 
-    constructor(contact: Vec2 | undefined, body: CollisionBody | undefined) {
+    constructor(ray: Line, contact: Vec2 | undefined, body: CollisionBody | undefined) {
+        this._ray = ray;
         this._contact = contact;
         this._body = body;
     }
 
+    /** Ray line. */
+    get ray() { return this._ray; }
     /** Ray contact point. */
     get contact() { return this._contact; }
     /** Ray contact body. */

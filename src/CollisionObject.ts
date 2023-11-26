@@ -1,5 +1,7 @@
 import { CollisionResult } from "./CollisionResult";
 import { CollisionShape } from "./CollisionShape";
+import { EventDispatcherImpl } from "./EventDispatcherImpl";
+import { Callback } from "./IEventDispatcher";
 import { SATChecker } from "./SATChecker";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
@@ -27,6 +29,7 @@ export abstract class CollisionObject {
     private _world?: World;
     private _meta: { [key: string]: unknown };
     private _active: boolean = true;
+    private _eventDispatcherImpl: EventDispatcherImpl;
 
     /** Collision shape. */
     get shape() { return this._shape; }
@@ -50,12 +53,14 @@ export abstract class CollisionObject {
     set position(value) {
         this._shape.position = value;
         if (this.world) this.world._updateObject(this);
+        this.dispatchEvent("changePosition", value);
     }
     /** Body angle. */
     get angle() { return this._shape.angle; }
     set angle(value) {
         this._shape.angle = value;
         if (this.world) this.world._updateObject(this);
+        this.dispatchEvent("changeAngle", value);
     }
     /** The world where the body is set. */
     get world() { return this._world; }
@@ -76,6 +81,19 @@ export abstract class CollisionObject {
         this._category = opt.category ?? 0;
         this._mask = opt.mask ?? 0;
         this._meta = opt.meta ?? {};
+        this._eventDispatcherImpl = new EventDispatcherImpl();
+    }
+
+    addEventListener(eventType: string, callback: Callback): void {
+        this._eventDispatcherImpl.addEventListener(eventType, callback);
+    }
+
+    removeEventListener(eventType: string, callback: Callback): void {
+        this._eventDispatcherImpl.removeEventListener(eventType, callback);
+    }
+
+    dispatchEvent(eventType: string, ...callbackArgs: unknown[]): void {
+        this._eventDispatcherImpl.dispatchEvent(eventType, ...callbackArgs);
     }
 
     _setWorld(world: World | undefined): void {
