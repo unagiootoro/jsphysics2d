@@ -1,7 +1,7 @@
 export class Vec2 {
     private _x: number;
     private _y: number;
-    private _length?: number;
+    private _magnitude?: number;
     private _rad?: number;
 
     static readonly ZERO = new Vec2(0, 0);
@@ -36,9 +36,9 @@ export class Vec2 {
         return undefined;
     }
 
-    static polar(rad: number, length: number) {
-        const x = length * Math.cos(rad);
-        const y = length * Math.sin(rad);
+    static polar(rad: number, magnitude: number) {
+        const x = magnitude * Math.cos(rad);
+        const y = magnitude * Math.sin(rad);
         return new Vec2(x, y);
     }
 
@@ -50,11 +50,11 @@ export class Vec2 {
         this._y = y;
     }
 
-    get length() {
-        if (this._length == null) {
-            this._length = Math.sqrt(this.x ** 2 + this.y ** 2);
+    get magnitude() {
+        if (this._magnitude == null) {
+            this._magnitude = Math.sqrt(this.x ** 2 + this.y ** 2);
         }
-        return this._length;
+        return this._magnitude;
     }
 
     get rad() {
@@ -117,7 +117,7 @@ export class Vec2 {
     }
 
     rotate(rad: number): Vec2 {
-        return Vec2.polar(rad, this.length);
+        return Vec2.polar(rad, this.magnitude);
     }
 
     dot(v: Vec2): number {

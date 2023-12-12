@@ -61,7 +61,7 @@ export class Line extends CollisionShape {
     checkCollidePoint(point: Vec2): boolean {
         const a = point.sub(this.begin);
         const b = this.end.sub(this.begin);
-        return eq(a.dot(b), a.length * b.length) && a.length < b.length - EPSILON / 2;
+        return eq(a.dot(b), a.magnitude * b.magnitude) && a.magnitude < b.magnitude - EPSILON / 2;
     }
 
     clone(): Line {
@@ -103,8 +103,8 @@ export class Line extends CollisionShape {
         const r = circle.radius;
         const s = ab.norm().cross(ac);
         if (Math.abs(s) >= r - EPSILON) return [];
-        const inA = lt(ac.length, r);
-        const inB = lt(bc.length, r);
+        const inA = lt(ac.magnitude, r);
+        const inB = lt(bc.magnitude, r);
         if (inA && inB) {
             return [];
         } else {

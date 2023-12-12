@@ -54,7 +54,7 @@ export class ContactChecker {
             if (intersects.length === 1) {
                 contacts.push(intersects[0]);
             } else if (intersects.length === 2) {
-                if (vertice.sub(intersects[0]).length < vertice.sub(intersects[1]).length) {
+                if (vertice.sub(intersects[0]).magnitude < vertice.sub(intersects[1]).magnitude) {
                     contacts.push(intersects[0]);
                 } else {
                     contacts.push(intersects[1]);

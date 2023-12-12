@@ -41,7 +41,7 @@ export class SATChecker {
                         vec = norm.mul(pr1.max - pr2.min);
                     }
                 }
-                if (!min || vec.length < min.length) {
+                if (!min || vec.magnitude < min.magnitude) {
                     min = vec;
                 }
             } else {

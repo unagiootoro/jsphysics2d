@@ -68,7 +68,7 @@ export class Raycaster {
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const contact = this._checkContact(rayLine, body.shape);
             if (contact == null) continue;
-            if (nearContact == null || contact.sub(begin).length < nearContact.sub(begin).length) {
+            if (nearContact == null || contact.sub(begin).magnitude < nearContact.sub(begin).magnitude) {
                 nearContact = contact;
                 hitBody = body;
             }
@@ -105,7 +105,7 @@ export class Raycaster {
         const points = rayLine.intersectCircle(circle);
         let nearPoint: Vec2 | undefined;
         for (const point of points) {
-            if (nearPoint == null || point.sub(begin).length < nearPoint.sub(begin).length) {
+            if (nearPoint == null || point.sub(begin).magnitude < nearPoint.sub(begin).magnitude) {
                 nearPoint = point;
             }
         }
@@ -118,7 +118,7 @@ export class Raycaster {
         for (const line of polygon.lines()) {
             const point = rayLine.intersectLine(line);
             if (!point) continue;
-            if (nearPoint == null || point.sub(begin).length < nearPoint.sub(begin).length) {
+            if (nearPoint == null || point.sub(begin).magnitude < nearPoint.sub(begin).magnitude) {
                 nearPoint = point;
             }
         }

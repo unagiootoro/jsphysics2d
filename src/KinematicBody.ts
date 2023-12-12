@@ -56,11 +56,11 @@ export class KinematicBody extends CollisionBody {
             }
             for (const result of results) {
                 const depth = result.depth;
-                if (!maxDepth || maxDepth.length < depth.length) {
+                if (!maxDepth || maxDepth.magnitude < depth.magnitude) {
                     maxDepth = depth;
                 }
             }
-            if (maxDepth && maxDepth.length >= EPSILON) {
+            if (maxDepth && maxDepth.magnitude >= EPSILON) {
                 this.position = this.position.sub(maxDepth);
                 this.world!._updateObject(this);
             } else {

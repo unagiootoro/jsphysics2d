@@ -24,7 +24,7 @@ export class Circle extends CollisionShape {
     }
 
     checkCollidePoint(point: Vec2): boolean {
-        return this.worldPosition().sub(point).length < this.radius - EPSILON;
+        return this.worldPosition().sub(point).magnitude < this.radius - EPSILON;
     }
 
     clone(): Circle {

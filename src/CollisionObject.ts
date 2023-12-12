@@ -117,7 +117,7 @@ export abstract class CollisionObject {
             const aabb2 = object.shape.toAABB();
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const depth = satChecker.checkSATCollision(this.shape, object.shape);
-            if (depth && depth.length >= EPSILON) {
+            if (depth && depth.magnitude >= EPSILON) {
                 results.push(new CollisionResult(object, depth));
             }
         }
