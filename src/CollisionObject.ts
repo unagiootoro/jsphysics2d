@@ -136,7 +136,7 @@ export abstract class CollisionObject {
     canCollideObject(object: CollisionObject): boolean {
         if (!(this.world && object.world)) return false;
         if (!(this.active && object.active)) return false;
-        if ((this.group | object.group) === 0) return false;
+        if ((this.group & object.group) === 0) return false;
         if ((this.category & object.mask) === 0 && (object.category & this.mask) === 0) return false;
         return true;
     }
