@@ -6,6 +6,7 @@ import { Line } from "./Line";
 import { Polygon } from "./Polygon";
 import { Vec2 } from "./Vec2";
 import { World } from "./World";
+import { eq } from "./utils";
 
 export interface IRayCasterOption {
     /** Collision group bit flags. */
@@ -58,7 +59,7 @@ export class Raycaster {
      */
     raycast(begin: Vec2, to: Vec2): RaycastResult {
         let nearContact: Vec2 | undefined;
-        let hitBody: CollisionBody | undefined;
+        let hitBodies: CollisionBody[] = [];
         const rayLine = Line.fromBeginToEnd(begin, to);
         const rayArea = new CollisionArea(rayLine, { group: this.group, category: this.category, mask: this.mask });
         this._world.add(rayArea);
@@ -68,9 +69,18 @@ export class Raycaster {
             if (!aabb1.isCollidedAABB(aabb2)) continue;
             const contact = this._checkContact(rayLine, body.shape);
             if (contact == null) continue;
-            if (nearContact == null || contact.sub(begin).magnitude < nearContact.sub(begin).magnitude) {
+            if (nearContact == null) {
                 nearContact = contact;
-                hitBody = body;
+                hitBodies = [body];
+            } else {
+                const distanceA = contact.sub(begin).magnitude;
+                const distanceB = nearContact.sub(begin).magnitude;
+                if (distanceA < distanceB) {
+                    nearContact = contact;
+                    hitBodies = [body];
+                } else if (eq(distanceA, distanceB)) {
+                    hitBodies.push(body);
+                }
             }
         }
         this._world.remove(rayArea);
@@ -80,7 +90,7 @@ export class Raycaster {
         } else {
             resultRayLine = rayLine;
         }
-        const result = new RaycastResult(resultRayLine, nearContact, hitBody);
+        const result = new RaycastResult(resultRayLine, nearContact, hitBodies);
         this._world.dispatchEvent("raycast", result);
         return result;
     }
@@ -132,20 +142,20 @@ export class Raycaster {
 export class RaycastResult {
     private _ray: Line;
     private _contact: Vec2 | undefined;
-    private _body: CollisionBody | undefined;
+    private _bodies: CollisionBody[];
 
-    constructor(ray: Line, contact: Vec2 | undefined, body: CollisionBody | undefined) {
+    constructor(ray: Line, contact: Vec2 | undefined, bodies: CollisionBody[]) {
         this._ray = ray;
         this._contact = contact;
-        this._body = body;
+        this._bodies = bodies;
     }
 
     /** Ray line. */
     get ray() { return this._ray; }
     /** Ray contact point. */
     get contact() { return this._contact; }
-    /** Ray contact body. */
-    get body() { return this._body; }
+    /** Ray contact bodies. */
+    get bodies() { return this._bodies; }
 
     /**
      * Check if Ray was hit.

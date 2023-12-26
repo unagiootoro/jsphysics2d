@@ -17,7 +17,7 @@ export class Test_Raycaster extends TestBase {
         const result = raycaster.raycast(new Vec2(10, 10.5), new Vec2(13, 10.5));
         this.assertInDelta(result.contact!.x, 11);
         this.assertInDelta(result.contact!.y, 10.5);
-        this.assertEquals(result.body!, lineBody);
+        this.assertEquals(result.bodies[0], lineBody);
     }
 
     // Raycast from the opposite direction
@@ -36,7 +36,29 @@ export class Test_Raycaster extends TestBase {
         const result = raycaster.raycast(new Vec2(13, 10.5), new Vec2(10, 10.5));
         this.assertInDelta(result.contact!.x, 12);
         this.assertInDelta(result.contact!.y, 10.5);
-        this.assertEquals(result.body!, lineBody2);
+        this.assertEquals(result.bodies.length, 1);
+        this.assertEquals(result.bodies[0], lineBody2);
+    }
+
+    // Test that multiple bodies can be detected simultaneously.
+    test_raycast_Line3() {
+        const world = new World(20, 20);
+
+        const line = Line.fromBeginToEnd(new Vec2(11, 10), new Vec2(11, 11));
+        const lineBody = new KinematicBody(line, { group: 0x01, category: 0x01, mask: 0x01 });
+        world.add(lineBody);
+
+        const line2 = Line.fromBeginToEnd(new Vec2(11, 9), new Vec2(11, 12));
+        const lineBody2 = new KinematicBody(line2, { group: 0x01, category: 0x01, mask: 0x01 });
+        world.add(lineBody2);
+
+        const raycaster = new Raycaster(world, { group: 0x01, category: 0x01, mask: 0x01 });
+        const result = raycaster.raycast(new Vec2(10, 10.5), new Vec2(13, 10.5));
+        this.assertInDelta(result.contact!.x, 11);
+        this.assertInDelta(result.contact!.y, 10.5);
+        this.assertEquals(result.bodies.length, 2);
+        this.assertEquals(result.bodies[0], lineBody);
+        this.assertEquals(result.bodies[1], lineBody2);
     }
 
     test_raycast_Circle() {
@@ -55,7 +77,8 @@ export class Test_Raycaster extends TestBase {
         const result = raycaster.raycast(new Vec2(10, 10.5), new Vec2(14, 10.5));
         this.assertInDelta(result.contact!.x, 11);
         this.assertInDelta(result.contact!.y, 10.5);
-        this.assertEquals(result.body!, circleBody);
+        this.assertEquals(result.bodies.length, 1);
+        this.assertEquals(result.bodies[0], circleBody);
     }
 
     test_raycast_Polygon() {
@@ -74,6 +97,7 @@ export class Test_Raycaster extends TestBase {
         const result = raycaster.raycast(new Vec2(10, 10.5), new Vec2(14, 10.5));
         this.assertInDelta(result.contact!.x, 11);
         this.assertInDelta(result.contact!.y, 10.5);
-        this.assertEquals(result.body!, rectBody);
+        this.assertEquals(result.bodies.length, 1);
+        this.assertEquals(result.bodies[0], rectBody);
     }
 }
