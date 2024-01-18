@@ -38,6 +38,26 @@ export class Test_QuadTree extends TestBase {
         this.assertEqualsArray((tree as any)._linear[30], [body1]);
     }
 
+    // Confirm that correct judgment can be made even if an object
+    // that has once gone out of the area is brought back into the area.
+    test_updateObject_2() {
+        const tree = new QuadTree(8, 8, 3);
+
+        const positions = [new Vec2(-0.49, -0.49), new Vec2(0.49, -0.49), new Vec2(0.49, 0.49), new Vec2(-0.49, 0.49)];
+        const polygon = new Polygon(positions);
+        const body1 = new KinematicBody(polygon);
+        body1.position = new Vec2(6.5, 4.5);
+        tree.add(body1);
+        this.assertEqualsArray((tree as any)._linear[73], [body1]);
+
+        body1.position = new Vec2(-10, -10);
+        tree.updateObject(body1);
+
+        body1.position = new Vec2(1.5, 2.5);
+        tree.updateObject(body1);
+        this.assertEqualsArray((tree as any)._linear[30], [body1]);
+    }
+
     test_findCollidableObjects() {
         const tree = new QuadTree(8, 8, 3);
 

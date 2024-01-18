@@ -25,6 +25,11 @@ export class QuadTree {
 
     add(object: CollisionObject): void {
         if (this._objects.has(object)) return;
+        this._addObjectToLinear(object);
+        this._objects.add(object);
+    }
+
+    private _addObjectToLinear(object: CollisionObject): void {
         const aabb = object.shape.toAABB();
         if (!this._aabbIsInTheArea(aabb)) return;
         this._lastAABBs.set(object, aabb);
@@ -34,43 +39,28 @@ export class QuadTree {
         } else {
             this._linear[index]!.push(object);
         }
-        this._objects.add(object);
     }
 
     remove(object: CollisionObject): void {
         if (!this._objects.has(object)) return;
-        const aabb = this._lastAABBs.get(object)!;
+        this._removeObjectInLinear(object);
+        this._objects.delete(object);
+    }
+
+    private _removeObjectInLinear(object: CollisionObject): void {
+        const aabb = this._lastAABBs.get(object);
+        if (!aabb) return;
         const index = this._calcLinearIndex(aabb);
         if (this._linear[index] != null) {
             this._linear[index] = this._linear[index]!.filter(o => o !== object);
         }
-        this._objects.delete(object);
         this._lastAABBs.delete(object);
     }
 
     updateObject(object: CollisionObject): void {
         if (!this._objects.has(object)) return;
-
-        const currentAABB = object.shape.toAABB();
-        if (!this._aabbIsInTheArea(currentAABB)) {
-            this.remove(object);
-            return;
-        }
-
-        const lastAABB = this._lastAABBs.get(object)!;
-        if (!lastAABB.equals(currentAABB)) {
-            this._lastAABBs.set(object, currentAABB);
-            const lastIndex = this._calcLinearIndex(lastAABB);
-            if (this._linear[lastIndex] != null) {
-                this._linear[lastIndex] = this._linear[lastIndex]!.filter(o => o !== object);
-            }
-            const currentIndex = this._calcLinearIndex(currentAABB);
-            if (this._linear[currentIndex] == null) {
-                this._linear[currentIndex] = [object];
-            } else {
-                this._linear[currentIndex]!.push(object);
-            }
-        }
+        this._removeObjectInLinear(object);
+        this._addObjectToLinear(object);
     }
 
     objects(): Set<CollisionObject> {
@@ -79,7 +69,8 @@ export class QuadTree {
 
     findCollidableObjects(object: CollisionObject): CollisionObject[] {
         if (!this._objects.has(object)) return [];
-        const aabb = this._lastAABBs.get(object)!;
+        const aabb = this._lastAABBs.get(object);
+        if (!aabb) return [];
         const [level, zOrder] = this._calcLevelAndZOrder(aabb);
         const index = this.calcLinearIndexByLevelAndZOrder(level, zOrder);
         const collidableObjects = this._linear[index]?.filter(_obj => _obj !== object) ?? [];
