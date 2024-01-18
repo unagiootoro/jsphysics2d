@@ -37,6 +37,10 @@ export class Line extends CollisionShape {
         return [this.begin, this.end];
     }
 
+    calcInertia(mass: number): number {
+        return (1 / 12) * mass * (this._vec.magnitude ** 2);
+    }
+
     toAABB(): AABB {
         let x1, y1, x2, y2;
         const v1 = this.begin;

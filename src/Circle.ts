@@ -27,6 +27,10 @@ export class Circle extends CollisionShape {
         return this.worldPosition().sub(point).magnitude < this.radius - EPSILON;
     }
 
+    calcInertia(mass: number): number {
+        return 0.5 * mass * this._radius ** 2;
+    }
+
     clone(): Circle {
         const circle = new Circle(this._radius);
         circle.position = this.position;

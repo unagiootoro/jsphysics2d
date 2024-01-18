@@ -36,5 +36,6 @@ export abstract class CollisionShape {
 
     abstract toAABB(): AABB;
     abstract checkCollidePoint(point: Vec2): boolean;
+    abstract calcInertia(mass: number): number;
     abstract clone(): CollisionShape;
 }

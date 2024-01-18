@@ -22,6 +22,10 @@ export class Polygon extends CollisionShape {
         });
     }
 
+    calcInertia(mass: number): number {
+        throw new Error("Currently, polygon intertia is not supported.");
+    }
+
     lines(): Line[] {
         const lines: Line[] = [];
         const vertices = this.worldVertices();

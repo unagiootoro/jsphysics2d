@@ -18,6 +18,13 @@ export class Rect extends Polygon {
 
     get size() { return this._size; }
 
+    calcInertia(mass: number): number {
+        const lines = this.lines();
+        const width = lines[0].vec.magnitude;
+        const height = lines[1].vec.magnitude;
+        return (1 / 12) * mass * (width ** 2 + height ** 2);
+    }
+
     clone(): Rect {
         const rect = new Rect(this._size);
         rect.position = this.position;
