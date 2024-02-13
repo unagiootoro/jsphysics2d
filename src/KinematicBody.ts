@@ -18,7 +18,6 @@ export class KinematicBody extends CollisionBody {
         if (!this.world) return [];
         const prevPosition = this.position;
         this.position = this.position.add(deltaVelocity);
-        this.world._updateObject(this);
         const [resolved, results] = this._collisionResolve();
         if (!resolved) {
             this.position = prevPosition;
@@ -36,7 +35,6 @@ export class KinematicBody extends CollisionBody {
         const prevAngle = this.angle;
         const prevPosition = this.position;
         this.angle = angle;
-        this.world._updateObject(this);
         const [resolved, results] = this._collisionResolve();
         if (!resolved) {
             this.angle = prevAngle;
@@ -62,7 +60,6 @@ export class KinematicBody extends CollisionBody {
             }
             if (maxDepth && maxDepth.magnitude >= EPSILON) {
                 this.position = this.position.sub(maxDepth);
-                this.world!._updateObject(this);
             } else {
                 return [true, collisionResults];
             }
