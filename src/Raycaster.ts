@@ -63,10 +63,7 @@ export class Raycaster {
         const rayLine = Line.fromBeginToEnd(begin, to);
         const rayArea = new CollisionArea(rayLine, { group: this.group, category: this.category, mask: this.mask });
         this._world.add(rayArea);
-        const aabb1 = rayLine.toAABB();
         for (const body of this._world.findCollidableBodies(rayArea)) {
-            const aabb2 = body.shape.toAABB();
-            if (!aabb1.isCollidedAABB(aabb2)) continue;
             const contact = this._checkContact(rayLine, body.shape);
             if (contact == null) continue;
             if (nearContact == null) {

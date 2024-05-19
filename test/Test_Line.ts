@@ -78,6 +78,25 @@ export class Test_Line extends TestBase {
         this.assertEquals(result.length, 0);
     }
 
+    test_intersectCircle_4() {
+        const line = new Line(new Vec2(0.5250000000000004, 0));
+        line.position = new Vec2(10.2625, 10);
+        const circle = new Circle(0.4);
+        circle.position = new Vec2(13, 10);
+        const result = line.intersectCircle(circle);
+        this.assertEquals(result.length, 0);
+    }
+
+    test_intersectCircle_5() {
+        const circle = new Circle(0.5);
+        circle.position = new Vec2(10, 10);
+        const line = Line.fromBeginToEnd(new Vec2(10.2, 10), new Vec2(11.2, 10));
+        const result = line.intersectCircle(circle);
+        this.assertEquals(result.length, 1);
+        this.assertInDelta(result[0].x, 10.5);
+        this.assertInDelta(result[0].y, 10);
+    }
+
     test_checkCollidePoint() {
         const line = Line.fromBeginToEnd(new Vec2(2, 2), new Vec2(3, 3));
         this.assertEquals(line.checkCollidePoint(new Vec2(2.5, 2.5)), true);

@@ -105,7 +105,7 @@ export class Line extends CollisionShape {
         if (Math.abs(s) >= r - EPSILON) return [];
         const inA = lt(ac.magnitude, r);
         const inB = lt(bc.magnitude, r);
-        if (inA && inB) {
+        if ((!(ab.norm().dot(ac) * ab.norm().dot(bc) <= 0 || (inA || inB))) || (inA && inB)) {
             return [];
         } else {
             const t = Math.sqrt(r ** 2 - s ** 2);
